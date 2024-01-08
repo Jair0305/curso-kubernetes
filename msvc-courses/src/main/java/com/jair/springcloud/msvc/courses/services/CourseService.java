@@ -1,7 +1,6 @@
 package com.jair.springcloud.msvc.courses.services;
 
-import com.jair.springcloud.msvc.courses.entities.Course;
-import org.springframework.expression.spel.ast.OpAnd;
+import com.jair.springcloud.msvc.courses.models.entity.Course;
 
 import java.util.List;
 import java.util.Optional;

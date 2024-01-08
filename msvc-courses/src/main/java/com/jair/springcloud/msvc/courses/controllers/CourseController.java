@@ -1,6 +1,6 @@
 package com.jair.springcloud.msvc.courses.controllers;
 
-import com.jair.springcloud.msvc.courses.entities.Course;
+import com.jair.springcloud.msvc.courses.models.entity.Course;
 import com.jair.springcloud.msvc.courses.services.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

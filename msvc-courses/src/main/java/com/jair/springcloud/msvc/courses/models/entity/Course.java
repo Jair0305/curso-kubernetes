@@ -1,4 +1,4 @@
-package com.jair.springcloud.msvc.courses.entities;
+package com.jair.springcloud.msvc.courses.models.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
