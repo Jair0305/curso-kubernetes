@@ -2,11 +2,15 @@ package com.jair.springcloud.msvc.users.controllers;
 
 import com.jair.springcloud.msvc.users.models.entity.User;
 import com.jair.springcloud.msvc.users.serivces.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -31,13 +35,23 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody User user){
+    public ResponseEntity<?> create(@Valid @RequestBody User user, BindingResult result){
+
+        if(result.hasErrors()){
+            return validate(result);
+        }
+
         User userDb = userService.save(user);
         return ResponseEntity.status(201).body(userDb);
     }
 
+
+
     @PutMapping ("/{id}")
-    public ResponseEntity<?> update(@RequestBody User user, @PathVariable Long id){
+    public ResponseEntity<?> update(@Valid @RequestBody User user, BindingResult result, @PathVariable Long id){
+        if(result.hasErrors()){
+            return validate(result);
+        }
         Optional<User> userDb = userService.forId(id);
         if (userDb.isEmpty()){
             return ResponseEntity.notFound().build();
@@ -57,6 +71,15 @@ public class UserController {
         }
         return ResponseEntity.notFound().build();
 
+    }
+
+    private static ResponseEntity<Map<String, String>> validate(BindingResult result) {
+        Map<String, String> errors = new HashMap<>();
+        result.getFieldErrors().forEach(err -> {
+            errors.put(err.getField(), "Field " + err.getField() + " " + err.getDefaultMessage());
+        });
+
+        return ResponseEntity.badRequest().body(errors);
     }
 
 }
