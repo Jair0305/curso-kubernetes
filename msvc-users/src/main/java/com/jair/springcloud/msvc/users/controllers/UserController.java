@@ -4,14 +4,13 @@ import com.jair.springcloud.msvc.users.models.entity.User;
 import com.jair.springcloud.msvc.users.serivces.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping ("/users")
@@ -36,9 +35,15 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody User user, BindingResult result){
-
+        
         if(result.hasErrors()){
             return validate(result);
+        }
+
+        if(!user.getEmail().isEmpty() && userService.findByEmail(user.getEmail()).isPresent()){
+            return ResponseEntity.badRequest()
+                    .body(Collections
+                            .singletonMap("message", "Email already exists"));
         }
 
         User userDb = userService.save(user);
@@ -49,17 +54,28 @@ public class UserController {
 
     @PutMapping ("/{id}")
     public ResponseEntity<?> update(@Valid @RequestBody User user, BindingResult result, @PathVariable Long id){
+
+
+
         if(result.hasErrors()){
             return validate(result);
         }
         Optional<User> userDb = userService.forId(id);
-        if (userDb.isEmpty()){
-            return ResponseEntity.notFound().build();
+        if(userDb.isPresent())
+        {
+            User userDb2 = userDb.get();
+            if(!user.getEmail().equalsIgnoreCase(userDb2.getEmail()) && userService.findByEmail(user.getEmail()).isPresent()){
+                return ResponseEntity.badRequest()
+                        .body(Collections
+                                .singletonMap("message", "Email already exists"));
+            }
+            userDb.get().setName(user.getName());
+            userDb.get().setEmail(user.getEmail());
+            userDb.get().setPassword(user.getPassword());
+            return ResponseEntity.status(HttpStatus.CREATED).body(userService.save(userDb.get()));
         }
-        userDb.get().setName(user.getName());
-        userDb.get().setEmail(user.getEmail());
-        userDb.get().setPassword(user.getPassword());
-        return ResponseEntity.status(201).body(userService.save(userDb.get()));
+
+        return ResponseEntity.notFound().build();
     }
 
     @DeleteMapping ("/{id}")
