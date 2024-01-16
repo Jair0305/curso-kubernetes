@@ -50,13 +50,8 @@ public class UserController {
         return ResponseEntity.status(201).body(userDb);
     }
 
-
-
     @PutMapping ("/{id}")
     public ResponseEntity<?> update(@Valid @RequestBody User user, BindingResult result, @PathVariable Long id){
-
-
-
         if(result.hasErrors()){
             return validate(result);
         }
@@ -74,7 +69,6 @@ public class UserController {
             userDb.get().setPassword(user.getPassword());
             return ResponseEntity.status(HttpStatus.CREATED).body(userService.save(userDb.get()));
         }
-
         return ResponseEntity.notFound().build();
     }
 
