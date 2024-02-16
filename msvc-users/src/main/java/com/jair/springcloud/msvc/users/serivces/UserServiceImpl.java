@@ -1,5 +1,6 @@
 package com.jair.springcloud.msvc.users.serivces;
 
+import com.jair.springcloud.msvc.users.clients.CourseClientRest;
 import com.jair.springcloud.msvc.users.models.entity.User;
 import com.jair.springcloud.msvc.users.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private CourseClientRest courseClientRest;
 
     @Override
     @Transactional(readOnly = true)
@@ -37,6 +41,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void delete(Long id) {
         userRepository.deleteById(id);
+        courseClientRest.deleteCourseUserByUserId(id);
     }
 
     @Override
@@ -47,5 +52,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
+    }
+
+    @Override
+    public List<User> listUsersByIds(Iterable<Long> ids) {
+        return (List<User>) userRepository.findAllById(ids);
     }
 }

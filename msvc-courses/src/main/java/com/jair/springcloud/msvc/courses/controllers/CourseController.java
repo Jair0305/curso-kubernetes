@@ -26,7 +26,7 @@ public class CourseController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> detail(@PathVariable Long id){
-        Optional<Course> o = courseService.forId(id);
+        Optional<Course> o = courseService.forIdWithUsers(id);          //courseService.forId(id);
         if(o.isEmpty()){
             return ResponseEntity.notFound().build();
         }
@@ -116,6 +116,14 @@ public class CourseController {
         }
         return ResponseEntity.notFound().build();
     }
+
+    @DeleteMapping("/delete-user/{id}")
+    public ResponseEntity<?> deleteCourseUserByUserId(@PathVariable Long id)
+    {
+        courseService.deleteCourseUserByUserId(id);
+        return ResponseEntity.noContent().build();
+    }
+
 
     private static ResponseEntity<Map<String, String>> validate(BindingResult result) {
         Map<String, String> errors = new HashMap<>();

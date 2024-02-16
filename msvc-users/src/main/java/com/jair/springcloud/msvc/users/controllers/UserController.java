@@ -79,7 +79,12 @@ public class UserController {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
+    }
 
+    @GetMapping ("/users-per-course")
+    public ResponseEntity getUsersPerCourse(@RequestParam List<Long> ids)
+    {
+        return ResponseEntity.ok(userService.listUsersByIds(ids));
     }
 
     private static ResponseEntity<Map<String, String>> validate(BindingResult result) {
